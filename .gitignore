@@ -1,0 +1,32 @@
+# Build files
+*.o
+*.ko
+*.mod
+*.mod.c
+*.order
+*.symvers
+modules.order
+Module.symvers
+
+# Kernel build artifacts
+.cache.mk
+
+# Executables
+industrial_monitor
+sensor_test
+driver_test
+
+# Logs
+logs/*.log
+
+# Temporary files
+*.tmp
+*.swp
+*~
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
