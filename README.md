@@ -2,9 +2,9 @@
 
 ## 1. Project Overview
 
-A Linux-based industrial equipment monitoring and fault detection system implemented using C/C++ and a custom Linux character device driver.
+A Linux-based industrial equipment monitoring and fault detection system implemented entirely using **C/C++** and a custom **Linux character device driver**.
 
-The system simulates and monitors industrial equipment parameters including:
+The system simulates industrial sensor data for:
 
 - Temperature
 - Vibration
@@ -12,419 +12,445 @@ The system simulates and monitors industrial equipment parameters including:
 - Voltage
 - Current
 
-Sensor data is transferred between user space and kernel space through a custom character device driver using IOCTL interfaces.
+The sensor data is transferred between **user space and kernel space** through a custom Linux character device using **IOCTL interfaces**.
 
-The system classifies equipment conditions into:
+The monitoring application analyzes the sensor values and classifies equipment conditions into:
 
-- NORMAL
-- WARNING
-- CRITICAL
+- **NORMAL**
+- **WARNING**
+- **CRITICAL**
 
-The driver maintains runtime statistics and records fault events and state transitions.
+The system also maintains driver statistics, detects fault-state transitions, records events in kernel logs, and maintains application-level monitoring logs.
 
 ---
 
-## 2. Objectives
+## 2. Project Objectives
 
-- Monitor industrial equipment parameters.
+The main objectives of this project are:
+
 - Implement a custom Linux character device driver.
-- Demonstrate user-space to kernel-space communication.
-- Implement a Linux character device interface.
-- Transfer sensor data using IOCTLs.
-- Detect abnormal operating conditions.
+- Demonstrate communication between user space and kernel space.
+- Use IOCTLs for sensor data and driver control.
+- Monitor multiple industrial equipment parameters.
+- Implement configurable sensor input and simulation.
+- Detect abnormal equipment conditions.
 - Classify faults based on severity.
-- Track state transitions between NORMAL, WARNING, and CRITICAL.
+- Detect transitions between NORMAL, WARNING, and CRITICAL states.
 - Maintain driver statistics.
-- Record fault events and recovery events.
-- Provide automatic sensor simulation.
-- Provide manual sensor input.
-- Maintain application logs.
-- Demonstrate Linux kernel programming and system programming concepts.
+- Implement driver reset and error handling.
+- Implement application and kernel-side logging.
+- Demonstrate Linux system programming and software architecture concepts.
 
 ---
 
-## 3. Technologies
+## 3. Technologies Used
+
+### Programming Languages
 
 - C
-- C++
+- C++17
+
+### Operating System
+
 - Linux
+
+### System Programming
+
 - Linux Kernel Modules
-- Character Device Driver
+- Character Device Drivers
 - IOCTL
+- User Space / Kernel Space Communication
+- File Operations
+- Kernel Logging
+- Linux Signals
+
+### Development Tools
+
 - GCC
 - G++
-- Make
+- GNU Make
 - Git
 - GitHub
 
 ---
 
-## 4. System Architecture
+## 4. Project Requirements Compliance
 
-The system follows a user-space/kernel-space architecture.
+| Requirement | Implementation |
+|---|---|
+| C/C++ only | Application written in C++17 and driver written in C |
+| Linux OS | Implemented and tested exclusively on Linux |
+| Linux Device Driver | Custom Linux character device driver |
+| Software/Hardware Architecture | Layered monitoring and driver architecture |
+| GitHub Submission | Complete source code, README, Makefiles, tests and documentation |
+
+---
+
+## 5. System Architecture
 
 ```text
-+------------------------------------------------------+
-|                  USER SPACE                          |
-|                                                      |
-|  +--------------------+                              |
-|  | Monitoring         |                              |
-|  | Application        |                              |
-|  | industrial_monitor |                              |
-|  +---------+----------+                              |
-|            |                                         |
-|            | IOCTL                                   |
-|            | Sensor Data / Fault Reports             |
-|            v                                         |
-+------------|-----------------------------------------+
-             |
-             | /dev/industrial_monitor
-             |
-+------------|-----------------------------------------+
-|            v            KERNEL SPACE                  |
-|                                                      |
-|  +-----------------------------------------------+   |
-|  | Industrial Monitor Character Device Driver    |   |
-|  |                                               |   |
-|  |  - Device management                          |   |
-|  |  - Sensor data handling                       |   |
-|  |  - IOCTL handling                             |   |
-|  |  - Fault event tracking                       |   |
-|  |  - Statistics                                 |   |
-|  |  - State transition handling                  |   |
-|  +-----------------------------------------------+   |
-|                                                      |
-+------------------------------------------------------+
-             |
-             v
-      Kernel Log / dmesg
+                    INDUSTRIAL EQUIPMENT
+                           │
+                           ▼
+                  ┌──────────────────┐
+                  │   Sensor Layer   │
+                  │                  │
+                  │ Temperature      │
+                  │ Vibration        │
+                  │ Motor RPM        │
+                  │ Voltage          │
+                  │ Current          │
+                  └────────┬─────────┘
+                           │
+                           ▼
+                  ┌──────────────────┐
+                  │ Monitoring       │
+                  │ Application      │
+                  │   C++17          │
+                  └────────┬─────────┘
+                           │
+                     IOCTL Interface
+                           │
+                           ▼
+              ┌──────────────────────────┐
+              │ Linux Character Device   │
+              │        Driver            │
+              │                          │
+              │ /dev/industrial_monitor  │
+              └────────────┬─────────────┘
+                           │
+                           ▼
+                  ┌──────────────────┐
+                  │ Kernel Space     │
+                  │                  │
+                  │ Sensor Storage   │
+                  │ Fault Events     │
+                  │ Statistics       │
+                  │ Reset Handling   │
+                  │ Error Handling   │
+                  └──────────────────┘
 
-             +
-             |
-             v
+                           │
+                           ▼
+                  ┌──────────────────┐
+                  │ Fault Detection  │
+                  │                  │
+                  │ NORMAL           │
+                  │ WARNING          │
+                  │ CRITICAL         │
+                  └────────┬─────────┘
+                           │
+                           ▼
+                  ┌──────────────────┐
+                  │ Logging / Report │
+                  │                  │
+                  │ Application Log  │
+                  │ Kernel dmesg     │
+                  └──────────────────┘
+# Linux-Based Industrial Equipment Monitoring and Fault Detection System
 
-      logs/industrial_monitor.log
-5. Project Components
-5.1 Sensor Layer
-The application provides simulated industrial sensor values.
-The monitored parameters are:
-Parameter	Unit
-Temperature	°C
-Vibration	mm/s
-Motor RPM	RPM
-Voltage	         V
-Current	         A
+## 1. Project Overview
 
-Two input modes are supported:
-1. Automatic simulation mode
-2. Manual sensor input mode
+A Linux-based industrial equipment monitoring and fault detection system implemented entirely using **C/C++** and a custom **Linux character device driver**.
 
-5.2 Linux Character Device Driver
-The custom kernel module provides the character device:
-/dev/industrial_monitor
-The driver handles:
-- Device open
-- Device close
-- Sensor data updates
-- Sensor data retrieval
-- Driver mode
-- Driver reset
-- Driver statistics
-- Fault reporting
+The system simulates industrial sensor data for:
 
-6. IOCTL Interface
-The communication between the monitoring application and the kernel driver is implemented using IOCTL commands.
-The shared interface is defined in:
-include/driver_interface.h
-Available IOCTLs:
-IOCTL              	Purpose
-IOCTL_GET_STATUS	Get driver status
-IOCTL_SET_MODE  	Set monitoring mode
-IOCTL_RESET     	Reset driver state
-IOCTL_GET_SENSOR_DATA	Retrieve sensor data
-IOCTL_SET_SENSOR_DATA	Send sensor data
-IOCTL_GET_STATS  	Retrieve driver statistics
-IOCTL_REPORT_FAULT	Report fault severity
-
-7. Fault Detection
-The monitoring application evaluates each sensor parameter independently.
-Parameters checked:
 - Temperature
 - Vibration
 - Motor RPM
 - Voltage
 - Current
-Each parameter is classified as:
-NORMAL
-WARNING
-CRITICAL
-The overall equipment status is determined from the individual parameter states.
-The highest severity condition determines the overall status.
-Example:
-Temperature : NORMAL
-Vibration   : NORMAL
-RPM         : WARNING
-Voltage     : NORMAL
-Current     : NORMAL
 
-Overall Status: WARNING
+The sensor data is transferred between **user space and kernel space** through a custom Linux character device using **IOCTL interfaces**.
 
-8. Fault State Transitions
-The driver tracks meaningful fault transitions rather than blindly counting every monitoring cycle.
-Typical transitions are:
-NORMAL
-   |
-   v
-WARNING
-   |
-   v
-CRITICAL
-   |
-   v
-NORMAL
+The monitoring application analyzes the sensor values and classifies equipment conditions into:
 
-The driver records:
-- Total fault events
-- Warning events
-- Critical events
-- Last fault severity
-- Last fault timestamp
-Recovery to NORMAL is also reported in the kernel log.
-Example kernel messages:
-NEW WARNING fault event
-NEW CRITICAL fault event
-equipment recovered to NORMAL
+- **NORMAL**
+- **WARNING**
+- **CRITICAL**
 
-9. Driver Statistics
-The driver maintains runtime statistics including:
-Device Opens
-Device Closes
-Sensor Reads
-Sensor Updates
-IOCTL Requests
-Fault Events
-Warning Events
-Critical Events
-Last Fault Severity
-Last Fault Time
+The system also maintains driver statistics, detects fault-state transitions, records events in kernel logs, and maintains application-level monitoring logs.
 
-Example:
-----------------------------------------
- DRIVER STATISTICS
-----------------------------------------
-Device Opens       : 2
-Device Closes      : 1
-Sensor Reads       : 0
-Sensor Updates     : 9
-IOCTL Requests     : 29
-Fault Events       : 6
-Warning Events     : 3
-Critical Events    : 3
-Last Fault Severity: 2
-Last Fault Time    : <timestamp>
-----------------------------------------
+---
 
-10. Logging
-The monitoring application maintains an application log:
-logs/industrial_monitor.log
+## 2. Project Objectives
 
-The log records:
-- Monitoring session start
-- Device initialization
-- Monitoring cycles
-- Sensor values
-- Equipment status
-- Warning conditions
-- Critical conditions
-- Fault events
-- Driver statistics
-- Driver reset
-- Device closure
-- Session completion
-Example:
-Cycle 2 - Temperature=80.00C,
-Vibration=5.00mm/s,
-RPM=3200,
-Voltage=245.00V,
-Current=12.00A,
-Status=WARNING
+The main objectives of this project are:
 
-11. Automatic Simulation Mode
-The default mode automatically cycles through predefined equipment conditions.
-Normal condition
-Temperature : 65 C
-Vibration   : 3 mm/s
-RPM         : 2200
-Voltage     : 230 V
-Current     : 7 A
+- Implement a custom Linux character device driver.
+- Demonstrate communication between user space and kernel space.
+- Use IOCTLs for sensor data and driver control.
+- Monitor multiple industrial equipment parameters.
+- Implement configurable sensor input and simulation.
+- Detect abnormal equipment conditions.
+- Classify faults based on severity.
+- Detect transitions between NORMAL, WARNING, and CRITICAL states.
+- Maintain driver statistics.
+- Implement driver reset and error handling.
+- Implement application and kernel-side logging.
+- Demonstrate Linux system programming and software architecture concepts.
 
-Expected status:
-NORMAL
+---
 
-Warning condition
-Temperature : 80 C
-Vibration   : 5 mm/s
-RPM         : 3200
-Voltage     : 245 V
-Current     : 12 A
+## 3. Technologies Used
 
-Expected status:
-WARNING
+### Programming Languages
 
-Critical condition
-Temperature : 100 C
-Vibration   : 9 mm/s
-RPM         : 3800
-Voltage     : 260 V
-Current     : 18 A
+- C
+- C++17
 
-Expected status:
-CRITICAL
+### Operating System
 
-The simulation continuously cycles through these conditions.
-12. Manual Sensor Input
-The application also supports manual sensor input.
-Run:
-sudo ./industrial_monitor --manual
+- Linux
 
-The application then accepts sensor values from the user instead of using the automatic simulation.
-This allows different operating conditions to be tested manually.
-13. Build Requirements
-The project requires:
-- Linux system
+### System Programming
+
+- Linux Kernel Modules
+- Character Device Drivers
+- IOCTL
+- User Space / Kernel Space Communication
+- File Operations
+- Kernel Logging
+- Linux Signals
+
+### Development Tools
+
 - GCC
 - G++
-- Linux kernel headers
-- Make
-Verify the kernel version:
-uname -r
+- GNU Make
+- Git
+- GitHub
 
-Verify the compiler:
-gcc --version
-g++ --version
+---
 
-14. Build the Project
-From the project root:
-cd ~/industrial-monitor
+## 4. Project Requirements Compliance
 
-Build the user-space application:
-make
+| Requirement | Implementation |
+|---|---|
+| C/C++ only | Application written in C++17 and driver written in C |
+| Linux OS | Implemented and tested exclusively on Linux |
+| Linux Device Driver | Custom Linux character device driver |
+| Software/Hardware Architecture | Layered monitoring and driver architecture |
+| GitHub Submission | Complete source code, README, Makefiles, tests and documentation |
 
-Build the kernel driver:
-make driver
+---
 
-Build both components:
-make
-make driver
+## 5. System Architecture
 
-15. Clean Build
-To remove generated build files:
-make clean
+```text
+                    INDUSTRIAL EQUIPMENT
+                           │
+                           ▼
+                  ┌──────────────────┐
+                  │   Sensor Layer   │
+                  │                  │
+                  │ Temperature      │
+                  │ Vibration        │
+                  │ Motor RPM        │
+                  │ Voltage          │
+                  │ Current          │
+                  └────────┬─────────┘
+                           │
+                           ▼
+                  ┌──────────────────┐
+                  │ Monitoring       │
+                  │ Application      │
+                  │   C++17          │
+                  └────────┬─────────┘
+                           │
+                     IOCTL Interface
+                           │
+                           ▼
+              ┌──────────────────────────┐
+              │ Linux Character Device   │
+              │        Driver            │
+              │                          │
+              │ /dev/industrial_monitor  │
+              └────────────┬─────────────┘
+                           │
+                           ▼
+                  ┌──────────────────┐
+                  │ Kernel Space     │
+                  │                  │
+                  │ Sensor Storage   │
+                  │ Fault Events     │
+                  │ Statistics       │
+                  │ Reset Handling   │
+                  │ Error Handling   │
+                  └──────────────────┘
 
-Then rebuild:
-make
-make driver
+                           │
+                           ▼
+                  ┌──────────────────┐
+                  │ Fault Detection  │
+                  │                  │
+                  │ NORMAL           │
+                  │ WARNING          │
+                  │ CRITICAL         │
+                  └────────┬─────────┘
+                           │
+                           ▼
+                  ┌──────────────────┐
+                  │ Logging / Report │
+                  │                  │
+                  │ Application Log  │
+                  │ Kernel dmesg     │
+                  └──────────────────┘
+# Linux-Based Industrial Equipment Monitoring and Fault Detection System
 
-16. Load the Kernel Driver
-Insert the kernel module:
-sudo insmod driver/industrial_monitor_driver.ko
+## 1. Project Overview
 
-Verify that it is loaded:
-lsmod | grep industrial_monitor
+A Linux-based industrial equipment monitoring and fault detection system implemented entirely using **C/C++** and a custom **Linux character device driver**.
 
-Verify the character device:
-ls -l /dev/industrial_monitor
+The system simulates industrial sensor data for:
 
-Expected device:
-/dev/industrial_monitor
+- Temperature
+- Vibration
+- Motor RPM
+- Voltage
+- Current
 
-17. Run the Monitoring Application
-Start automatic monitoring:
-sudo ./industrial_monitor
+The sensor data is transferred between **user space and kernel space** through a custom Linux character device using **IOCTL interfaces**.
 
-The application continuously displays:
-NORMAL
-WARNING
-CRITICAL
+The monitoring application analyzes the sensor values and classifies equipment conditions into:
 
-Press:
-Ctrl+C
+- **NORMAL**
+- **WARNING**
+- **CRITICAL**
 
-to stop monitoring.
-The application then:
-1. Stops the monitoring loop.
-2. Retrieves driver statistics.
-3. Resets the driver.
-4. Closes the character device.
-5. Completes the monitoring session.
-18. Run Manual Mode
-Run:
-sudo ./industrial_monitor --manual
+The system also maintains driver statistics, detects fault-state transitions, records events in kernel logs, and maintains application-level monitoring logs.
 
-Enter sensor values when prompted.
-This can be used to test different fault conditions.
-19. Check Kernel Logs
-Kernel driver activity can be inspected using:
-sudo dmesg | tail -40
+---
 
-Important messages include:
-device opened
-mode changed to 1
-sensor data updated
-sensor data requested
-NEW WARNING fault event
-NEW CRITICAL fault event
-equipment recovered to NORMAL
-statistics requested
-driver reset
-device closed
+## 2. Project Objectives
 
-20. Unload the Driver
-When the monitoring application is stopped:
-sudo rmmod industrial_monitor_driver
+The main objectives of this project are:
 
-Verify:
-lsmod | grep industrial_monitor
+- Implement a custom Linux character device driver.
+- Demonstrate communication between user space and kernel space.
+- Use IOCTLs for sensor data and driver control.
+- Monitor multiple industrial equipment parameters.
+- Implement configurable sensor input and simulation.
+- Detect abnormal equipment conditions.
+- Classify faults based on severity.
+- Detect transitions between NORMAL, WARNING, and CRITICAL states.
+- Maintain driver statistics.
+- Implement driver reset and error handling.
+- Implement application and kernel-side logging.
+- Demonstrate Linux system programming and software architecture concepts.
 
-If there is no output, the module has been unloaded.
-21. Testing
-The project has been tested for:
-Functional Testing
-- Character device opening
-- Character device closing
-- Sensor data transmission
-- Sensor data retrieval
-- IOCTL communication
-- Driver reset
-- Statistics retrieval
-Fault Testing
-- NORMAL condition
-- WARNING condition
-- CRITICAL condition
-- WARNING → CRITICAL transition
-- CRITICAL → NORMAL recovery
-- Repeated fault transitions
-Stress Testing
-Repeated monitoring cycles were executed successfully.
-Example verified results:
-Sensor Updates     : 9
-Fault Events       : 6
-Warning Events     : 3
-Critical Events    : 3
+---
 
-Kernel logs confirmed repeated:
-NEW WARNING fault event
-NEW CRITICAL fault event
-equipment recovered to NORMAL
+## 3. Technologies Used
 
-22. Project Directory Structure
+### Programming Languages
+
+- C
+- C++17
+
+### Operating System
+
+- Linux
+
+### System Programming
+
+- Linux Kernel Modules
+- Character Device Drivers
+- IOCTL
+- User Space / Kernel Space Communication
+- File Operations
+- Kernel Logging
+- Linux Signals
+
+### Development Tools
+
+- GCC
+- G++
+- GNU Make
+- Git
+- GitHub
+
+---
+
+## 4. Project Requirements Compliance
+
+| Requirement | Implementation |
+|---|---|
+| C/C++ only | Application written in C++17 and driver written in C |
+| Linux OS | Implemented and tested exclusively on Linux |
+| Linux Device Driver | Custom Linux character device driver |
+| Software/Hardware Architecture | Layered monitoring and driver architecture |
+| GitHub Submission | Complete source code, README, Makefiles, tests and documentation |
+
+---
+
+## 5. System Architecture
+
+```text
+                    INDUSTRIAL EQUIPMENT
+                           │
+                           ▼
+                  ┌──────────────────┐
+                  │   Sensor Layer   │
+                  │                  │
+                  │ Temperature      │
+                  │ Vibration        │
+                  │ Motor RPM        │
+                  │ Voltage          │
+                  │ Current          │
+                  └────────┬─────────┘
+                           │
+                           ▼
+                  ┌──────────────────┐
+                  │ Monitoring       │
+                  │ Application      │
+                  │   C++17          │
+                  └────────┬─────────┘
+                           │
+                     IOCTL Interface
+                           │
+                           ▼
+              ┌──────────────────────────┐
+              │ Linux Character Device   │
+              │        Driver            │
+              │                          │
+              │ /dev/industrial_monitor  │
+              └────────────┬─────────────┘
+                           │
+                           ▼
+                  ┌──────────────────┐
+                  │ Kernel Space     │
+                  │                  │
+                  │ Sensor Storage   │
+                  │ Fault Events     │
+                  │ Statistics       │
+                  │ Reset Handling   │
+                  │ Error Handling   │
+                  └──────────────────┘
+
+                           │
+                           ▼
+                  ┌──────────────────┐
+                  │ Fault Detection  │
+                  │                  │
+                  │ NORMAL           │
+                  │ WARNING          │
+                  │ CRITICAL         │
+                  └────────┬─────────┘
+                           │
+                           ▼
+                  ┌──────────────────┐
+                  │ Logging / Report │
+                  │                  │
+                  │ Application Log  │
+                  │ Kernel dmesg     │
+                  └──────────────────┘
+6. Project Structure
 industrial-monitor/
 │
 ├── driver/
 │   ├── industrial_monitor_driver.c
-│   ├── industrial_monitor_driver_backup.c
-│   ├── Makefile
-│   └── industrial_monitor_driver.ko
+│   └── Makefile
 │
 ├── include/
 │   ├── driver_interface.h
@@ -445,96 +471,420 @@ industrial-monitor/
 │   └── industrial_monitor.log
 │
 ├── Makefile
-├── industrial_monitor
-├── driver_test
 ├── README.md
 └── .gitignore
+Generated kernel build artifacts such as .o, .ko, .mod, .cmd, and other temporary files are excluded using .gitignore.
+7. Sensor Parameters
+The system monitors five industrial parameters.
+Parameter	Unit	Purpose
+Temperature	°C	Detect overheating
+Vibration	mm/s	Detect excessive mechanical vibration
+Motor RPM	RPM	Monitor motor operating speed
+Voltage	V	Monitor electrical voltage
+Current	A	Monitor electrical current
 
-23. User Space to Kernel Space Data Flow
-The monitoring process follows this sequence:
-Sensor Input
-     |
-     v
-Fault Detection
-     |
-     v
-Determine Severity
-     |
-     v
-IOCTL_SET_SENSOR_DATA
-     |
-     v
-Linux Character Driver
-     |
-     v
-Kernel Driver State
-     |
-     +--------------------+
-     |                    |
-     v                    v
-GET_SENSOR_DATA      REPORT_FAULT
-     |                    |
-     +---------+----------+
-               |
-               v
-        Driver Statistics
-               |
-               v
-          Kernel Logs
 
-24. Key Linux Concepts Demonstrated
-This project demonstrates practical use of:
-- Linux kernel modules
-- Character devices
-- Device file creation
-- Kernel/user-space communication
-- IOCTL
+8. Fault Severity Classification
+The monitoring application evaluates every sensor parameter and determines its severity.
+NORMAL
+Equipment is operating within the expected operating range.
+WARNING
+The equipment is operating outside the normal range and requires attention.
+CRITICAL
+The equipment has reached a critical operating condition and requires immediate attention.
+The overall equipment status is determined from the individual sensor conditions.
+9. State Transition Detection
+The driver maintains the current fault state and detects meaningful state transitions.
+Examples:
+NORMAL → WARNING
+WARNING → CRITICAL
+CRITICAL → NORMAL
+NORMAL → CRITICAL
+
+Repeated reports of the same state do not unnecessarily generate new fault events.
+The driver logs important transitions such as:
+NEW WARNING fault event
+NEW CRITICAL fault event
+equipment recovered to NORMAL
+
+This provides event-based fault tracking instead of simply counting every monitoring cycle as a new fault.
+10. Linux Character Device Driver
+The project implements a custom Linux character device.
+Device:
+/dev/industrial_monitor
+
+The driver provides communication between the user-space monitoring application and kernel space.
+The driver supports:
+- Device open
+- Device close
+- IOCTL operations
+- Sensor data update
+- Sensor data retrieval
+- Driver mode configuration
+- Driver reset
+- Driver statistics
+- Fault event reporting
+- Invalid IOCTL rejection
 - Kernel logging
-- Module loading and unloading
-- Kernel synchronization concepts
-- Driver state management
-- Error handling
-- C/C++ system programming
-- Makefiles
-- Linux debugging using dmesg
-- Git-based project development
-25. Example Monitoring Output
+11. IOCTL Interface
+The shared interface is defined in:
+include/driver_interface.h
+
+Supported IOCTLs
+IOCTL	Purpose
+IOCTL_GET_STATUS	Retrieve driver status
+IOCTL_SET_MODE	Configure driver mode
+IOCTL_RESET	Reset driver state
+IOCTL_GET_SENSOR_DATA	Retrieve sensor data
+IOCTL_SET_SENSOR_DATA	Update sensor data
+IOCTL_GET_STATS	Retrieve driver statistics
+IOCTL_REPORT_FAULT	Report fault severity
+
+
+The same interface definition is shared between user space and kernel space to maintain a consistent communication contract.
+12. Driver Statistics
+The driver maintains runtime statistics including:
+- Device opens
+- Device closes
+- Sensor reads
+- Sensor updates
+- IOCTL requests
+- Fault events
+- Warning events
+- Critical events
+- Last fault severity
+- Last fault timestamp
+Example:
+----------------------------------------
+ DRIVER STATISTICS
+----------------------------------------
+Device Opens       : 1
+Device Closes      : 0
+Sensor Reads       : 0
+Sensor Updates     : 3
+IOCTL Requests     : 11
+Fault Events       : 2
+Warning Events     : 1
+Critical Events    : 1
+Last Fault Severity: 2
+Last Fault Time    : ...
+----------------------------------------
+
+13. User Space Monitoring Application
+The monitoring application:
+1. Opens /dev/industrial_monitor.
+2. Enables monitoring mode.
+3. Generates or accepts sensor values.
+4. Sends sensor data to the kernel driver.
+5. Retrieves sensor data from the driver.
+6. Performs fault analysis.
+7. Determines overall equipment status.
+8. Reports fault severity to the driver.
+9. Logs monitoring information.
+10. Displays driver statistics when monitoring stops.
+11. Resets the driver.
+12. Closes the device.
+14. Automatic Simulation Mode
+The default monitoring mode uses simulated industrial sensor conditions.
+Scenario 1 — NORMAL
+Temperature : 65 C
+Vibration   : 3 mm/s
+Motor RPM   : 2200 RPM
+Voltage     : 230 V
+Current     : 7 A
+
+Expected status:
+NORMAL
+
+Scenario 2 — WARNING
+Temperature : 80 C
+Vibration   : 5 mm/s
+Motor RPM   : 3200 RPM
+Voltage     : 245 V
+Current     : 12 A
+
+Expected status:
+WARNING
+
+Scenario 3 — CRITICAL
+Temperature : 100 C
+Vibration   : 9 mm/s
+Motor RPM   : 3800 RPM
+Voltage     : 260 V
+Current     : 18 A
+
+Expected status:
+CRITICAL
+
+The application cycles through these scenarios automatically.
+15. Manual Sensor Input
+The application also supports manual sensor input.
+Example:
+sudo ./industrial_monitor --manual
+
+The user can enter sensor values directly for testing different operating conditions.
+16. Logging
+The project provides two levels of logging.
+Application Logging
+Monitoring events are stored in:
+logs/industrial_monitor.log
+
+The log contains:
+- Monitoring cycles
+- Sensor values
+- Fault severity
+- Overall equipment status
+- Fault events
+- Driver statistics
+- Driver reset status
+- Session start/stop events
+Kernel Logging
+Kernel-side driver events can be inspected using:
+sudo dmesg | tail -30
+
+Example:
+industrial_monitor: device opened
+industrial_monitor: mode changed to 1
+industrial_monitor: sensor data updated
+industrial_monitor: sensor data requested
+industrial_monitor: NEW WARNING fault event
+industrial_monitor: NEW CRITICAL fault event
+industrial_monitor: equipment recovered to NORMAL
+industrial_monitor: statistics requested
+industrial_monitor: driver reset
+industrial_monitor: device closed
+
+17. Error Handling
+The project implements error handling at both user and kernel levels.
+Examples include:
+- Device open failure
+- IOCTL failure
+- Invalid IOCTL command
+- Sensor data transfer failure
+- Driver reset failure
+- Device close handling
+Invalid IOCTL testing was performed and rejected correctly:
+[OK] Invalid IOCTL rejected
+Error: Invalid argument
+
+18. Build Requirements
+A Linux system with the following installed packages/tools is required:
+- GCC
+- G++
+- GNU Make
+- Linux kernel headers
+- Build tools
+The project must be executed on Linux because it depends on Linux kernel interfaces and kernel module infrastructure.
+19. Build the Project
+Clone the repository:
+git clone <YOUR_GITHUB_REPOSITORY_URL>
+cd industrial-monitor
+
+Build the complete project:
+make
+
+This builds:
+industrial_monitor
+driver/industrial_monitor_driver.ko
+
+20. Clean the Build
+To remove generated application and kernel build files:
+make clean
+
+Then rebuild:
+make
+
+21. Load the Kernel Driver
+Load the driver:
+sudo insmod driver/industrial_monitor_driver.ko
+
+Verify that the module is loaded:
+lsmod | grep industrial_monitor
+
+Verify the character device:
+ls -l /dev/industrial_monitor
+
+Expected device:
+/dev/industrial_monitor
+
+22. Run the Monitoring Application
+Run automatic simulation mode:
+sudo ./industrial_monitor
+
+The application will cycle through:
+NORMAL
+   ↓
+WARNING
+   ↓
+CRITICAL
+   ↓
+NORMAL
+
+Press:
+Ctrl+C
+
+to stop monitoring.
+The application then displays the final driver statistics, resets the driver, and closes the device.
+23. Run Manual Mode
+Run:
+sudo ./industrial_monitor --manual
+
+Enter sensor values when prompted.
+This mode can be used to test custom operating conditions.
+24. View Kernel Logs
+Use:
+sudo dmesg | tail -40
+
+To monitor driver events while testing:
+sudo dmesg -w
+
+Press:
+Ctrl+C
+
+to stop following the kernel log.
+25. Unload the Driver
+After testing:
+sudo rmmod industrial_monitor_driver
+
+Verify:
+lsmod | grep industrial_monitor
+
+The module should no longer appear.
+26. Makefile Commands
+The top-level Makefile provides the following commands:
+Build everything
+make
+
+Build application
+make app
+
+Build tests
+make test
+
+Build kernel driver
+make driver
+
+Clean build files
+make clean
+
+Install/load driver
+make install
+
+Unload driver
+make uninstall
+
+27. Testing
+The project was tested using:
+Functional Testing
+- Character device opening
+- Monitoring mode configuration
+- Sensor data update
+- Sensor data retrieval
+- Fault reporting
+- Driver statistics
+- Driver reset
+- Device close
+Fault Testing
+- NORMAL condition
+- WARNING condition
+- CRITICAL condition
+- WARNING → CRITICAL transition
+- CRITICAL → NORMAL recovery
+- Repeated monitoring cycles
+Error Testing
+- Invalid IOCTL command
+- Driver communication errors
+- Device access errors
+- Reset handling
+Kernel Verification
+Kernel events were verified using:
+sudo dmesg
+
+28. Example Monitoring Output
 ========================================
- INDUSTRIAL EQUIPMENT MONITOR
+ MONITORING CYCLE 2
 ========================================
 
-[OK] Character device opened
-[OK] Monitoring mode enabled
+Temperature : 80.00 C [WARNING]
+Vibration   : 5.00 mm/s [WARNING]
+Motor RPM   : 3200 RPM [WARNING]
+Voltage     : 245.00 V [WARNING]
+Current     : 12.00 A [WARNING]
 
-Temperature : 65.00 C [NORMAL]
-Vibration   : 3.00 mm/s [NORMAL]
-Motor RPM   : 2200 RPM [NORMAL]
-Voltage     : 230.00 V [NORMAL]
-Current     : 7.00 A [NORMAL]
-
-Overall Status: NORMAL
-
-Warning:
+----------------------------------------
 Overall Status: WARNING
+
+[OK] Fault status reported to kernel
 [WARNING] Equipment requires attention
 
-Critical:
+Critical condition:
+----------------------------------------
 Overall Status: CRITICAL
+
+[OK] Fault status reported to kernel
 [CRITICAL] Immediate equipment attention required
 
-26. Project Outcome
-The project successfully demonstrates a Linux-based industrial monitoring architecture in which a user-space monitoring application communicates with a custom Linux kernel character device driver.
-The system supports sensor monitoring, fault classification, state-transition detection, kernel statistics, fault reporting, logging, automatic simulation, manual input, and repeated fault testing.
-27. Future Improvements
-Possible future extensions include:
-- Real physical sensor integration
-- Persistent database storage
-- Web-based monitoring dashboard
-- Remote equipment monitoring
-- Email/SMS alerts
-- Additional industrial sensors
-- Configurable thresholds through configuration files
-- Systemd-based driver/service startup
-- Advanced predictive maintenance using machine learning
-- Hardware-based emergency shutdown control
+29. Security and Privilege Requirements
+Loading and unloading a Linux kernel module requires administrator privileges.
+Therefore, commands such as:
+sudo insmod ...
+sudo rmmod ...
+sudo ./industrial_monitor
 
+may require sudo.
+The project should be executed in a controlled Linux development environment.
+30. Limitations
+This project uses simulated or manually entered sensor data rather than physical industrial sensors.
+The system is intended as an educational demonstration of:
+- Linux device driver development
+- Kernel/user-space communication
+- Fault detection
+- System programming
+- Software architecture
+It is not intended to directly control or protect real industrial machinery.
+31. Key Learning Outcomes
+This project demonstrates practical understanding of:
+- C and C++ programming
+- Linux system programming
+- Linux kernel modules
+- Character device drivers
+- IOCTL interfaces
+- User space and kernel space
+- Kernel logging
+- Fault detection
+- State transition handling
+- Error handling
+- Runtime statistics
+- GNU Make
+- Git and GitHub
+- Software architecture
+32. Future Enhancements
+Possible future improvements include:
+- Integration with physical sensors
+- Real-time sensor acquisition
+- Configurable fault thresholds
+- Persistent fault history
+- Web-based monitoring dashboard
+- Database-backed logging
+- Alert notifications
+- Hardware-specific sensor interfaces
+- More advanced synchronization mechanisms
+- Performance monitoring and benchmarking
+33. Conclusion
+The Linux-Based Industrial Equipment Monitoring and Fault Detection System demonstrates a complete software architecture combining a C++ monitoring application with a custom C-based Linux character device driver.
+The project successfully demonstrates:
+Sensor Simulation
+       ↓
+C++ Monitoring Application
+       ↓
+IOCTL Interface
+       ↓
+Linux Character Device
+       ↓
+Kernel Driver
+       ↓
+Fault Detection & Statistics
+       ↓
+Logging and Reporting
+
+The system was implemented using C/C++ on Linux, incorporates relevant Linux Device Driver concepts, and provides a complete build, execution, testing, and documentation workflow.
