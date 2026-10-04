@@ -727,3 +727,12 @@ Conclusion
 The Linux-Based Industrial Equipment Monitoring and Fault Detection System demonstrates how a custom Linux character device driver can be integrated with a C++ monitoring application to create a software-based industrial monitoring architecture.
 The completed system provides sensor monitoring, kernel-user space communication, IOCTL interfaces, fault detection, state transitions, statistics, logging, error handling, testing, and a complete build workflow.
 The project satisfies the core requirements of a Linux-based C/C++ system-level project and provides a foundation for future integration with real industrial hardware and advanced monitoring technologies.
+
+## System Documentation
+
+Detailed architecture and UML documentation is available in the `docs/` directory.
+
+- [System Architecture](docs/architecture.md)
+- [Class Diagram](docs/class_diagram.md)
+- [Sequence Diagram](docs/sequence_diagram.md)
+- [State Machine Diagram](docs/state_machine.md)
