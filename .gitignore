@@ -30,3 +30,5 @@ logs/*.log
 
 # OS files
 .DS_Store
+# Kernel build command files
+*.cmd

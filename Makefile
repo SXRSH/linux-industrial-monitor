@@ -16,24 +16,31 @@ DRIVER_DIR := driver
 
 .PHONY: all app test driver clean install uninstall
 
-all: app
+# Build everything
+all: app driver
 
+# Build monitoring application
 app:
 	$(CXX) $(CXXFLAGS) $(APP_SRC) -o $(APP)
 
+# Build test program
 test:
 	$(CXX) $(CXXFLAGS) $(TEST_SRC) -o $(TEST)
 
+# Build kernel driver
 driver:
 	$(MAKE) -C $(DRIVER_DIR)
 
+# Clean userspace and kernel build artifacts
 clean:
 	rm -f $(APP)
 	rm -f $(TEST)
 	$(MAKE) -C $(DRIVER_DIR) clean
 
-install: app driver
+# Build and load driver
+install: all
 	sudo insmod $(DRIVER_DIR)/industrial_monitor_driver.ko
 
+# Unload driver
 uninstall:
 	sudo rmmod industrial_monitor_driver || true
